@@ -43,6 +43,7 @@ export default class ScrollProfilesExtension extends Extension {
         this._windowTracker = Shell.WindowTracker.get_default();
         this._targetWindow = undefined;
         this._targetAppName = 'Default profile';
+        this._overviewActive = Main.overview.visible;
         this._vertical = DEFAULT_FACTOR;
         this._horizontal = DEFAULT_FACTOR;
 
@@ -63,8 +64,16 @@ export default class ScrollProfilesExtension extends Extension {
         );
         this._focusChangedId = global.display.connect(
             'notify::focus-window',
-            () => this._refreshTarget(true)
+            () => this._refreshFocusedTarget()
         );
+        this._overviewShowingId = Main.overview.connect('showing', () => {
+            this._overviewActive = true;
+            this._useWindow(null, true);
+        });
+        this._overviewHiddenId = Main.overview.connect('hidden', () => {
+            this._overviewActive = false;
+            this._refreshTarget(true);
+        });
         this._settingsChangedId = this._settings.connect(
             'changed',
             () => this._onSettingsChanged()
@@ -87,6 +96,14 @@ export default class ScrollProfilesExtension extends Extension {
         if (this._focusChangedId) {
             global.display.disconnect(this._focusChangedId);
             this._focusChangedId = 0;
+        }
+        if (this._overviewShowingId) {
+            Main.overview.disconnect(this._overviewShowingId);
+            this._overviewShowingId = 0;
+        }
+        if (this._overviewHiddenId) {
+            Main.overview.disconnect(this._overviewHiddenId);
+            this._overviewHiddenId = 0;
         }
         if (this._settingsChangedId) {
             this._settings.disconnect(this._settingsChangedId);
@@ -160,11 +177,23 @@ export default class ScrollProfilesExtension extends Extension {
 
     _refreshTarget(force) {
         try {
-            const window = this._windowUnderPointer() ??
-                global.display.get_focus_window();
+            const window = this._overviewActive
+                ? null
+                : this._windowUnderPointer();
             this._useWindow(window, force);
         } catch (error) {
             console.error(`Scroll Profiles: target detection failed: ${error.message}`);
+        }
+    }
+
+    _refreshFocusedTarget() {
+        try {
+            const window = this._overviewActive
+                ? null
+                : global.display.get_focus_window();
+            this._useWindow(window, false);
+        } catch (error) {
+            console.error(`Scroll Profiles: focus detection failed: ${error.message}`);
         }
     }
 
