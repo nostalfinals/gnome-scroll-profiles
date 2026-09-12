@@ -1,0 +1,8 @@
+{
+  "uuid": "scroll-profiles@nostalfinals",
+  "name": "Scroll Profiles",
+  "description": "Per-application touchpad scroll factors for GNOME Wayland",
+  "version": 1,
+  "shell-version": ["50"],
+  "settings-schema": "org.gnome.shell.extensions.scroll-profiles"
+}

@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schemalist>
+  <schema id="org.gnome.shell.extensions.scroll-profiles" path="/org/gnome/shell/extensions/scroll-profiles/">
+    <key name="global-vertical-factor" type="d">
+      <default>1.0</default>
+      <range min="0.01" max="10.0"/>
+      <summary>Default vertical scroll factor</summary>
+    </key>
+    <key name="global-horizontal-factor" type="d">
+      <default>1.0</default>
+      <range min="0.01" max="10.0"/>
+      <summary>Default horizontal scroll factor</summary>
+    </key>
+    <key name="vertical-factors" type="a{sd}">
+      <default>{}</default>
+      <summary>Per-application vertical scroll factors</summary>
+    </key>
+    <key name="horizontal-factors" type="a{sd}">
+      <default>{}</default>
+      <summary>Per-application horizontal scroll factors</summary>
+    </key>
+    <key name="show-indicator" type="b">
+      <default>false</default>
+      <summary>Show the active scroll factor in the panel</summary>
+    </key>
+  </schema>
+</schemalist>
